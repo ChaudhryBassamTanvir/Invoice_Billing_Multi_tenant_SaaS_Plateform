@@ -1,13 +1,17 @@
 {
+   
   "private": true,
-  "scripts": {
-    "build": "next build",
-    "dev": "next dev",
-    "prettier": "prettier --write --ignore-unknown .",
-    "prettier:check": "prettier --check --ignore-unknown .",
-    "start": "next start",
-    "seed": "node -r dotenv/config ./scripts/seed.js"
-  },
+"scripts": {
+  "build": "next build",
+  "dev": "next dev",
+  "prettier": "prettier --write --ignore-unknown .",
+  "prettier:check": "prettier --check --ignore-unknown .",
+  "start": "next start",
+  "seed": "node -r dotenv/config ./scripts/seed.js"
+}, 
+"prisma": {
+  "seed": "node -r dotenv/config ./scripts/seed.js"
+},
   "dependencies": {
     "@faker-js/faker": "^10.2.0",
     "@heroicons/react": "^2.0.18",
