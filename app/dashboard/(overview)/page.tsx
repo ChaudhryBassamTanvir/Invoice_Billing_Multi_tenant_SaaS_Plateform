@@ -2,21 +2,35 @@ import CardWrapper from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
-import { Suspense } from 'react';
-// import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
 import { Metadata } from 'next'; 
 import darkTheme from '@/app/lib/dark-theme';
-// import { CardSkeleton } from '@/app/ui/skeletons';
 
+import { query } from '@/app/lib/db.server';
 export const metadata: Metadata = {
   title: 'Dashboard',
 };
 import { auth } from '@/auth';
+async function getUserName(email: string) {
+  const result = await query(
+    `SELECT name FROM users2 WHERE email = $1`,
+    [email]
+  );
+
+  return result.rows[0]?.name ?? 'User';
+}
 
 export default async function Page() {
- const session = await auth();
-  const userEmail = session?.user?.email!; 
-  const userName = session?.user?.name; 
+  
+const session = await auth();
+
+  if (!session?.user?.email) {
+    return <p className="text-gray-400">Not authenticated</p>;
+  }
+
+  const userEmail = session.user.email;
+
+  // 🔥 Fetch UPDATED name directly from DB
+  const userName = await getUserName(userEmail);
    if (!session?.user?.email) {
     return <p className="text-gray-400">Not authenticated</p>;
   }

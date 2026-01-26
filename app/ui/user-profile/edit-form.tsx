@@ -9,15 +9,34 @@ import { updateUser } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 import darkTheme from '@/app/lib/dark-theme';
 import { User } from '@/app/lib/definitions';
-
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 export default function Form({ 
   user
 } : { 
   user: User
 }) {
-
+const router = useRouter();
   const initialState:any = { message: null, errors: {} };
   const [state, dispatch] = useFormState(updateUser, initialState);
+useEffect(() => {
+    if (!state?.message) return;
+
+    if (
+      state.message.toLowerCase().includes('fail') ||
+      state.message.toLowerCase().includes('error')
+    ) {
+      toast.error(state.message);
+    } else {
+      toast.success(state.message);
+
+      // ✅ Client-side navigation (no reload)
+      setTimeout(() => {
+        router.push('/dashboard/user-profile');
+      }, 1200);
+    }
+  }, [state, router]);
 
   return (
     <form action={dispatch}>

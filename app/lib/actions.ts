@@ -266,23 +266,46 @@ export async function authenticateWithOAuth(provider: string) {
   await signIn(provider);
 }
 
-export async function updateUser(_: UserState, formData: FormData) : Promise<UserState>{
-  const hashedPassword = await bcrypt.hash(
-    formData.get('password') as string,
-    10
-  );
+export async function updateUser(
+  _: UserState,
+  formData: FormData
+): Promise<UserState> {
+  try {
+    const password = formData.get('password') as string;
+    const name = formData.get('name') as string;
 
-  await query(
-    `UPDATE users2
-     SET name=$1, password=$2, isoauth=false
-     WHERE email=$3`,
-    [
-      formData.get('name'),
-      hashedPassword,
-      formData.get('userEmail'),
-    ]
-  );
+    if (!password || password.length < 6) {
+      return {
+        message: 'Password must be at least 6 characters long',
+        errors: {
+          password: ['Password is too short'],
+        },
+      };
+    }
 
-  revalidatePath('/dashboard/user-profile');
-  redirect('/dashboard/user-profile');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await query(
+      `UPDATE users2
+       SET name = $1, password = $2, isoauth = false
+       WHERE email = $3`,
+      [
+        name,
+        hashedPassword,
+        formData.get('userEmail'),
+      ]
+    );
+
+    revalidatePath('/dashboard/user-profile');
+
+    // ✅ SUCCESS
+    return {
+      message: 'User profile updated successfully',
+    };
+  } catch (error) {
+    console.error('Update user error:', error);
+    return {
+      message: 'Failed to update user profile',
+    };
+  }
 }
