@@ -25,9 +25,9 @@ export default function Footer() {
             </div>
 
             <p className="mt-4 text-sm text-violet-100 leading-relaxed">
-              Nimbus is a modern Next.js example app designed
-              to help you learn and build beautiful interfaces
-              faster.
+              Nimbus is a multi-tenant invoice and billing management platform
+              built to streamline payments, automate workflows, and support
+              growing businesses at scale.
             </p>
           </div>
 
@@ -37,10 +37,10 @@ export default function Footer() {
               Product
             </h4>
             <ul className="space-y-3 text-sm text-violet-100">
-              <li className="hover:text-white cursor-pointer transition">Features</li>
-              <li className="hover:text-white cursor-pointer transition">Pricing</li>
-              <li className="hover:text-white cursor-pointer transition">Docs</li>
-              <li className="hover:text-white cursor-pointer transition">Updates</li>
+              <li className="hover:text-white cursor-pointer transition">Invoicing</li>
+              <li className="hover:text-white cursor-pointer transition">Billing</li>
+              <li className="hover:text-white cursor-pointer transition">Documentation</li>
+              <li className="hover:text-white cursor-pointer transition">Releases</li>
             </ul>
           </div>
 
@@ -50,7 +50,7 @@ export default function Footer() {
               Company
             </h4>
             <ul className="space-y-3 text-sm text-violet-100">
-              <li className="hover:text-white cursor-pointer transition">About</li>
+              <li className="hover:text-white cursor-pointer transition">About Nimbus</li>
               <li className="hover:text-white cursor-pointer transition">Blog</li>
               <li className="hover:text-white cursor-pointer transition">Careers</li>
               <li className="hover:text-white cursor-pointer transition">Contact</li>
@@ -78,8 +78,8 @@ export default function Footer() {
           </p>
 
           <div className="flex gap-6">
-            <span className="hover:text-white cursor-pointer transition">Privacy</span>
-            <span className="hover:text-white cursor-pointer transition">Terms</span>
+            <span className="hover:text-white cursor-pointer transition">Privacy Policy</span>
+            <span className="hover:text-white cursor-pointer transition">Terms of Service</span>
             <span className="hover:text-white cursor-pointer transition">Cookies</span>
           </div>
         </div>

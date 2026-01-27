@@ -10,35 +10,36 @@ import {
 const features = [
   {
     icon: <FiGlobe size={24} />,
-    title: "Globally Recognized",
-    desc: "Nimbus is trusted worldwide for building fast, modern, and scalable applications.",
+    title: "Multi-Tenant Ready",
+    desc: "Nimbus is built to serve multiple businesses securely from a single platform.",
   },
   {
     icon: <FiSettings size={24} />,
-    title: "Easily Customizable",
-    desc: "Built with clean architecture so you can adapt Nimbus to your needs effortlessly.",
+    title: "Fully Configurable",
+    desc: "Customize invoices, billing cycles, taxes, and branding to match your business.",
   },
   {
     icon: <FiTrendingUp size={24} />,
-    title: "Built for Impact",
-    desc: "Optimized performance and accessibility to help your product grow confidently.",
+    title: "Scales With Growth",
+    desc: "Designed to handle growing clients, invoices, and transactions effortlessly.",
   },
   {
     icon: <FiHeadphones size={24} />,
-    title: "Worldwide Support",
-    desc: "Our community and documentation are available anytime, anywhere.",
+    title: "Reliable Support",
+    desc: "Clear documentation and support to help you manage billing without friction.",
   },
   {
     icon: <FiStar size={24} />,
-    title: "Awesome Design",
-    desc: "Carefully crafted UI using modern design principles and best practices.",
+    title: "Clean & Professional UI",
+    desc: "Modern, intuitive interface focused on clarity, speed, and usability.",
   },
   {
     icon: <FiUsers size={24} />,
-    title: "Handled by Experts",
-    desc: "Designed by experienced engineers who know what production apps need.",
+    title: "Built for Businesses",
+    desc: "Engineered for startups, agencies, and enterprises managing multiple clients.",
   },
 ];
+
 
 export default function WhyChooseUs() {
   return (

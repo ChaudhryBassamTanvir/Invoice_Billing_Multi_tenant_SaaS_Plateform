@@ -15,11 +15,12 @@ const HeroSection = () => {
           <span className={`${lusitana.className} text-xl text-gray-800 ${darkTheme.text}
           md:text-3xl md:leading-normal
           `}>
-            <strong>Welcome to Nimbus.</strong> This is the example for the{' '}
-            <div  className="text-violet-500">
-              Multi-Tenant-Saas-Application
-            </div>
-            , brought to you by DS Technologies.
+          <strong>Welcome to Nimbus.</strong> A powerful{' '}
+<div className="text-violet-500">
+  Multi-Tenant Invoice & Billing SaaS Platform
+</div>
+designed to simplify invoicing, manage billing, and scale effortlessly for modern businesses — built with care at DS Technologies.
+
           </span>
           <Link
             href="/login"
