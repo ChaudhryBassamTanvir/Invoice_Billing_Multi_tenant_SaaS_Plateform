@@ -19,7 +19,7 @@ const HeroSection = () => {
             <div  className="text-violet-500">
               Multi-Tenant-Saas-Application
             </div>
-            , brought to you by CMIT.
+            , brought to you by DS Technologies.
           </span>
           <Link
             href="/login"
