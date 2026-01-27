@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s | Nimbus Dashboard',
     default: 'Nimbus Dashboard',
   },
-  // metadataBase: new URL(''),
+  metadataBase: new URL('http://51.21.180.128'),
   description: 'A Dashboard App where users can create an account , create customers and assign invoices to them. Invoices will be shown at the Dashboard page as a summary. This project is based on the Next Learn Course, the official Next.js 14 .',
   openGraph: {
     title: 'Dashboard App,',
