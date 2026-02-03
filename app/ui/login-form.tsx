@@ -26,7 +26,7 @@ function GoogleSignIn() {
  
 export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(authenticateWithCredentials, undefined);
-
+const router = useRouter();
   return (
     <div className="flex-1 rounded-lg bg-gray-50 dark:bg-[#212121]
         px-6 pb-4 pt-8
@@ -85,8 +85,16 @@ export default function LoginForm() {
                 -translate-y-1/2 text-gray-500 peer-focus:text-gray-900
                 ${darkTheme.inputIcon}
               `}/>
+ 
+
             </div>
           </div>
+                       <p
+  onClick={() => router.replace('/forgot-password')}
+  className="text-sm text-violet-600 cursor-pointer mt-2 hover:text-violet-900"
+>
+  Forgot password?
+</p>
         </div>
         
         <LoginButton />
@@ -170,7 +178,7 @@ function GoogleSignInButton() {
       <button className={`
         flex h-10 items-center rounded-lg
         px-4 text-sm font-medium
-        w-full bg-white hover:bg-[#4287f5]
+        w-full bg-white hover:bg-violet-600
         text-black hover:text-white
         mt-2
       `} type='submit'>

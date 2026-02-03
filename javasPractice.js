@@ -120,6 +120,20 @@
 
 
 
-const greet = name => "Hello " + name;
+// const greet = name => "Hello " + name;
 
-console.log(greet())
+// console.log(greet())
+
+// let a=1;
+// let b="tes"
+// console.log(a+b);
+// for (var i = 1; i < 5; i++) {
+//   console.log(i);
+// }
+console.log(x);
+var x = 10;
+
+sayHello();
+function sayHello() {
+  console.log("Hello");
+}

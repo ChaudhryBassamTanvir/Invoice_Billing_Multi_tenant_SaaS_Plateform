@@ -8,7 +8,8 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcrypt';
-
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
 /* -------------------- VALIDATION -------------------- */
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -308,4 +309,92 @@ export async function updateUser(
       message: 'Failed to update user profile',
     };
   }
+}
+
+
+/* -------------------- Reset Password -------------------- */
+
+export async function requestPasswordReset(
+  _: any,
+  formData: FormData
+) {
+  const email = formData.get('email') as string;
+
+  const user = await query(
+    `SELECT id FROM users2 WHERE email=$1`,
+    [email]
+  );
+
+  // ❌ Email not found → explicit error
+  if (user.rowCount === 0) {
+    return {
+      error: 'Email does not exist. Please create an account.',
+    };
+  }
+
+  // ✅ Email exists → proceed
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiry = new Date(Date.now() + 1000 * 60 * 15); // 15 minutes
+
+  await query(
+    `UPDATE users2
+     SET reset_token=$1, reset_token_expiry=$2
+     WHERE email=$3`,
+    [token, expiry, email]
+  );
+
+  const resetLink = `${process.env.BASE_URL}/reset-password?token=${token}`;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  await transporter.sendMail({
+    to: email,
+    subject: 'Reset your password',
+    html: `
+      <p>Click the link to reset your password:</p>
+      <a href="${resetLink}">${resetLink}</a>
+    `,
+  });
+
+  return {
+    message: 'Password reset link sent to your email.',
+  };
+}
+
+
+
+/* -------------------- upodated password after Reset  -------------------- */
+
+export async function resetPassword(
+  _: any,
+  formData: FormData
+) {
+  const token = formData.get('token') as string;
+  const password = formData.get('password') as string;
+
+  const hashed = await bcrypt.hash(password, 10);
+
+  const result = await query(
+    `
+    UPDATE users2
+    SET password=$1,
+        reset_token=NULL,
+        reset_token_expiry=NULL
+    WHERE reset_token=$2
+      AND reset_token_expiry > NOW()
+    `,
+    [hashed, token]
+  );
+
+  if (result.rowCount === 0) {
+    return { message: 'Invalid or expired token' };
+  }
+
+  return { message: 'Password updated successfully' };
 }
