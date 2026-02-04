@@ -17,16 +17,57 @@ const ITEMS_PER_PAGE = 6;
 /* =========================
    REVENUE
 ========================= */
-export async function fetchRevenue() {
+export async function fetchRevenue(userEmail: string) {
   noStore();
+
   try {
-    const data = await query(`SELECT * FROM revenue`);
-    return data.rows;
+    const result = await query(
+      `
+      SELECT
+        TO_CHAR(date, 'Mon') AS month,
+        SUM(amount) / 100 AS revenue
+      FROM invoices2 i
+      JOIN customers2 c ON i.customer_id = c.id
+      WHERE
+        c.user_email = $1
+        AND i.status = 'paid'
+        AND date >= CURRENT_DATE - INTERVAL '12 months'
+      GROUP BY TO_CHAR(date, 'Mon'), DATE_TRUNC('month', date)
+      ORDER BY DATE_TRUNC('month', date)
+      `,
+      [userEmail]
+    );
+
+    return result.rows;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    console.error('Revenue fetch error:', error);
+    return [];
   }
 }
+export function generateYAxis(data: { month: string; revenue: number }[]) {
+  if (!data || data.length === 0) return { yAxisLabels: [], topLabel: 0 };
+
+  const revenues = data.map((d) => d.revenue);
+  const maxRevenue = Math.max(...revenues);
+
+  // Round to nearest 10, 50, 100 etc. depending on scale
+  const step = Math.ceil(maxRevenue / 5); // 5 ticks
+  const yAxisLabels = Array.from({ length: 6 }, (_, i) => `$${(step * i).toLocaleString()}`);
+
+  return { yAxisLabels, topLabel: maxRevenue };
+}
+
+
+// export async function fetchRevenue() {
+//   noStore();
+//   try {
+//     const data = await query(`SELECT * FROM revenue`);
+//     return data.rows;
+//   } catch (error) {
+//     console.error('Database Error:', error);
+//     throw new Error('Failed to fetch revenue data.');
+//   }
+// }
 
 /* =========================
    LATEST INVOICES

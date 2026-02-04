@@ -26,19 +26,20 @@ export const formatDateToLocal = (
   return formatter.format(date);
 };
 
-export const generateYAxis = (revenue: Revenue[]) => {
-  // Calculate what labels we need to display on the y-axis
-  // based on highest record and in 1000s
-  const yAxisLabels = [];
-  const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-  const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+export function generateYAxis(data: { month: string; revenue: number; currency?: string }[]) {
+  if (!data || data.length === 0) return { yAxisLabels: [], topLabel: 0 };
 
-  for (let i = topLabel; i >= 0; i -= 1000) {
-    yAxisLabels.push(`$${i / 1000}K`);
-  }
+  const revenues = data.map((d) => d.revenue);
+  const maxRevenue = Math.max(...revenues);
 
-  return { yAxisLabels, topLabel };
-};
+  // 5 steps only
+  const step = Math.ceil(maxRevenue / 5);
+
+  // Generate labels from max → 0 (descending)
+  const yAxisLabels = Array.from({ length: 6 }, (_, i) => `$${(step * (5 - i)).toLocaleString()}`);
+
+  return { yAxisLabels, topLabel: maxRevenue };
+}
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
   // If the total number of pages is 7 or less,
