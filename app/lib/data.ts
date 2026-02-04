@@ -69,51 +69,51 @@ export async function fetchLatestInvoices(userEmail: string) {
 export async function fetchCardData(userEmail: string) {
   noStore();
 
-  try {
+try {
     const invoiceCountPromise = query(
       `
-      SELECT COUNT(*)
-      FROM invoices2
-      JOIN customers2 ON invoices2.customer_id = customers2.id
-      WHERE customers2.user_email = $1
+      SELECT COUNT(*) AS count
+      FROM invoices2 i
+      JOIN customers2 c ON i.customer_id = c.id
+      WHERE c.user_email = $1
       `,
       [userEmail]
     );
 
     const customerCountPromise = query(
       `
-      SELECT COUNT(*)
+      SELECT COUNT(*) AS count
       FROM customers2
       WHERE user_email = $1
       `,
       [userEmail]
     );
 
-    const invoiceStatusPromise = query(
-    `
-  SELECT
-    currency,
-    SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS paid,
-    SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS pending
-  FROM invoices2
-  JOIN customers2 ON invoices2.customer_id = customers2.id
-  WHERE customers2.user_email = $1
-  GROUP BY currency
-  `,
+    const totalsPromise = query(
+      `
+      SELECT
+        COALESCE(SUM(CASE WHEN i.status = 'paid' THEN i.amount ELSE 0 END), 0) / 100
+          AS total_paid,
+        COALESCE(SUM(CASE WHEN i.status = 'pending' THEN i.amount ELSE 0 END), 0) / 100
+          AS total_pending
+      FROM invoices2 i
+      JOIN customers2 c ON i.customer_id = c.id
+      WHERE c.user_email = $1
+      `,
       [userEmail]
     );
 
-    const [invoiceCount, customerCount, invoiceStatus] =
-      await Promise.all([
-        invoiceCountPromise,
-        customerCountPromise,
-        invoiceStatusPromise,
-      ]);
+    const [invoiceCount, customerCount, totals] = await Promise.all([
+      invoiceCountPromise,
+      customerCountPromise,
+      totalsPromise,
+    ]);
 
     return {
-       numberOfInvoices: Number(invoiceCount.rows[0].count ?? 0),
-  numberOfCustomers: Number(customerCount.rows[0].count ?? 0),
-  invoiceTotals: invoiceStatus.rows, 
+      numberOfInvoices: Number(invoiceCount.rows[0]?.count ?? 0),
+      numberOfCustomers: Number(customerCount.rows[0]?.count ?? 0),
+      totalPaidInvoices: Number(totals.rows[0]?.total_paid ?? 0),
+      totalPendingInvoices: Number(totals.rows[0]?.total_pending ?? 0),
     };
   } catch (error) {
     console.error('Database Error:', error);
