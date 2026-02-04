@@ -3,6 +3,18 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import PDFDocument from 'pdfkit/js/pdfkit.standalone';
 import { query } from '@/app/lib/db.server';
+function formatMoney(amountInCents: number, currency: 'USD' | 'PKR' | 'EUR') {
+  const symbols: Record<string, string> = {
+    USD: '$',
+    PKR: 'Rs.',
+    EUR: '€',
+  };
+
+  const symbol = symbols[currency] ?? '';
+  const value = (amountInCents / 100).toFixed(2);
+
+  return `${symbol} ${value}`;
+}
 
 export async function GET(
   _req: Request,
@@ -12,7 +24,8 @@ export async function GET(
 
   // ✅ Fetch invoice + customer
   const result = await query(
-    `SELECT i.id, i.amount, i.status, i.date,
+    `SELECT i.id, i.amount, i.status, i.date,    i.currency,
+
             c.name AS customer_name,
             c.email AS customer_email
      FROM invoices2 i
@@ -96,8 +109,11 @@ export async function GET(
   doc
     .fontSize(11)
     .text('Service Charges', itemX, rowY)
-    .text(`$${(invoice.amount / 100).toFixed(2)}`, amountX, rowY)
-    .text(invoice.status.toUpperCase(), statusX, rowY);
+.text(
+  formatMoney(invoice.amount, invoice.currency),
+  amountX,
+  rowY
+)    .text(invoice.status.toUpperCase(), statusX, rowY);
 
   doc.moveDown(2);
 
@@ -112,9 +128,10 @@ export async function GET(
   /* ---------- TOTAL ---------- */
   doc
     .fontSize(14)
-    .text(`Total Amount: $${(invoice.amount / 100).toFixed(2)}`, {
-      align: 'right',
-    });
+   .text(
+  `Total Amount: ${formatMoney(invoice.amount, invoice.currency)}`,
+  { align: 'right' }
+);
 
   doc.moveDown(2);
 

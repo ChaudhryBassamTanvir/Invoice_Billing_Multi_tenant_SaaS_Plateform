@@ -39,6 +39,8 @@ export async function fetchLatestInvoices(userEmail: string) {
       `
       SELECT
         invoices2.amount,
+              invoices2.currency,
+
         customers2.name,
         customers2.email,
         invoices2.id
@@ -53,7 +55,7 @@ export async function fetchLatestInvoices(userEmail: string) {
 
     return data.rows.map((invoice: any) => ({
       ...invoice,
-      amount: formatCurrency(invoice.amount),// convert your currency to Dollar
+      amount: formatCurrency(invoice.amount,invoice.currency),// convert your currency to Dollar
     }));
   } catch (error:any) {
     console.error('Database Error:', error.message);
@@ -88,14 +90,16 @@ export async function fetchCardData(userEmail: string) {
     );
 
     const invoiceStatusPromise = query(
-      `
-      SELECT
-        SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS paid,
-        SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS pending
-      FROM invoices2
-      JOIN customers2 ON invoices2.customer_id = customers2.id
-      WHERE customers2.user_email = $1
-      `,
+    `
+  SELECT
+    currency,
+    SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS paid,
+    SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS pending
+  FROM invoices2
+  JOIN customers2 ON invoices2.customer_id = customers2.id
+  WHERE customers2.user_email = $1
+  GROUP BY currency
+  `,
       [userEmail]
     );
 
@@ -107,10 +111,9 @@ export async function fetchCardData(userEmail: string) {
       ]);
 
     return {
-      numberOfInvoices: Number(invoiceCount.rows[0].count ?? 0),
-      numberOfCustomers: Number(customerCount.rows[0].count ?? 0),
-      totalPaidInvoices: formatCurrency(invoiceStatus.rows[0].paid ?? 0),
-      totalPendingInvoices: formatCurrency(invoiceStatus.rows[0].pending ?? 0),
+       numberOfInvoices: Number(invoiceCount.rows[0].count ?? 0),
+  numberOfCustomers: Number(customerCount.rows[0].count ?? 0),
+  invoiceTotals: invoiceStatus.rows, 
     };
   } catch (error) {
     console.error('Database Error:', error);
@@ -134,11 +137,12 @@ export async function fetchFilteredInvoices(
       `
       SELECT
         invoices2.id,
-        invoices2.amount,
-        invoices2.date,
-        invoices2.status,
-        customers2.name,
-        customers2.email
+  invoices2.amount,
+  invoices2.currency,
+  invoices2.date,
+  invoices2.status,
+  customers2.name,
+  customers2.email
       FROM invoices2
       JOIN customers2 ON invoices2.customer_id = customers2.id
       WHERE
@@ -223,7 +227,8 @@ export async function fetchInvoiceById(id: string, userEmail: string) {
 
     return {
       ...data.rows[0],
-      amount: data.rows[0].amount / 100,
+  amount: data.rows[0].amount / 100,
+  currency: data.rows[0].currency,
     };
   } catch (error) {
     console.error('Database Error:', error);
@@ -292,9 +297,9 @@ export async function fetchFilteredCustomers(
     );
 
     return data.rows.map((customer: any) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
+       ...customer,
+  total_pending: customer.total_pending,
+  total_paid: customer.total_paid,
     }));
   } catch (error) {
     console.error('Database Error:', error);

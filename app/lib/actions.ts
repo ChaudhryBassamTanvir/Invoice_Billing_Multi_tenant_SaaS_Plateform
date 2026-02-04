@@ -31,6 +31,7 @@ const UserSchema = z.object({
 const InvoiceSchema = z.object({
   customerId: z.string(),
   amount: z.coerce.number().gt(0),
+  currency: z.enum(['USD', 'PKR', 'EUR']),
   status: z.enum(['pending', 'paid']),
 });
 
@@ -39,6 +40,7 @@ const CustomerSchema = z.object({
   email: emailSchema,
   userEmail: emailSchema,
 });
+
 
 /* -------------------- TYPES -------------------- */
 
@@ -63,12 +65,14 @@ export async function createInvoice(
   _: InvoiceState,
   formData: FormData
 ): Promise<InvoiceState> {
-  const parsed = InvoiceSchema.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+const parsed:any = InvoiceSchema.safeParse({
+  customerId: formData.get('customerId'),
+  amount: formData.get('amount'),
+  currency: formData.get('currency'),
+  status: formData.get('status'),
+});
 
+const { customerId, amount, currency, status } = parsed.data;
   if (!parsed.success) {
     return {
       errors: parsed.error.flatten().fieldErrors,
@@ -76,13 +80,15 @@ export async function createInvoice(
     };
   }
 
-  const { customerId, amount, status } = parsed.data;
+  // const { customerId, amount, status } = parsed.data;
 
   try {
     await query(
-      `INSERT INTO invoices2 (customer_id, amount, status, date)
-       VALUES ($1, $2, $3, CURRENT_DATE)`,
-      [customerId, amount * 100, status]
+ `
+  INSERT INTO invoices2 (customer_id, amount, currency, status, date)
+  VALUES ($1, $2, $3, $4, CURRENT_DATE)
+  `,
+  [customerId, amount * 100, currency, status]
     );
   } catch (error) {
     console.error('Create invoice error:', error);

@@ -14,9 +14,12 @@ import { useFormState } from 'react-dom';
 import darkTheme from '@/app/lib/dark-theme';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { CustomerSearch } from './CustomerSearch';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
+
+
   const initialState = { message: null, errors: {} };
   const [state, dispatch]:any = useFormState(createInvoice, initialState);
 const router = useRouter();
@@ -48,28 +51,11 @@ useEffect(() => {
             Choose customer
           </label>
           <div className="relative">
-            <select
-              id="customer"
-              name="customerId"
-              className={`peer block w-full cursor-pointer rounded-md border 
-                border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500
-                ${darkTheme.border} ${darkTheme.bg} ${darkTheme.text}
-              `}
-              defaultValue=""
-              aria-describedby="customer-error"
-            >
-              <option value="" disabled>
-                Select a customer
-              </option>
-              {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
+
             <UserCircleIcon className={`pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] 
               -translate-y-1/2 text-gray-500 ${darkTheme.inputIcon}
-            `}/>
+              `}/>
+              <CustomerSearch customers={customers}  />
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
             {state.errors?.customerId &&
@@ -96,6 +82,7 @@ useEffect(() => {
                 type="number"
                 step="0.01"
                 placeholder="Enter USD amount"
+
                 className={`peer block w-full rounded-md border border-gray-200 
                   py-2 pl-10 text-sm outline-2 placeholder:text-gray-500
                   ${darkTheme.border} ${darkTheme.bg} ${darkTheme.text}
@@ -117,6 +104,19 @@ useEffect(() => {
             </div>
           </div>
         </div>
+{/*Choose Currency */}
+<div className="mb-4">
+  <label className="mb-2 block text-sm font-medium">Currency</label>
+  <select
+    name="currency"
+    defaultValue="USD"
+    className="w-full rounded-md border py-2 px-3"
+  >
+    <option value="USD">$ US Dollar</option>
+    <option  value="PKR">Rs PKR </option>
+    <option   value="EUR"> € EUR </option>
+  </select>
+</div>
 
         {/* Invoice Status */}
         <fieldset>
