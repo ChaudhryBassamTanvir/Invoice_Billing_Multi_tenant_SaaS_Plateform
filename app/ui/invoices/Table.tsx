@@ -5,7 +5,7 @@ import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoices } from '@/app/lib/data';
 import darkTheme from '@/app/lib/dark-theme';
 import { auth } from '@/auth';
-
+import { DownloadInvoicePDF } from './downloadInvoicePDF';
 export default async function InvoicesTable({
   query,
   currentPage,
@@ -106,8 +106,9 @@ export default async function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateInvoice id={invoice.id} />
-                      <DeleteInvoice id={invoice.id} />
+                      <UpdateInvoice id={invoice.id} />  
+                    <DeleteInvoice id={invoice.id} />
+                    <DownloadInvoicePDF id={invoice.id}/>
                     </div>
                   </td>
                 </tr>
