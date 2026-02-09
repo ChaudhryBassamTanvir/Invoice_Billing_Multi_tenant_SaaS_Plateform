@@ -1,0 +1,30 @@
+name: Auto Deploy to AWS
+
+on:
+  push:
+    branches:
+      - master  # Deploy when master is updated
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to AWS server
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
+            cd ~/nimbus-app
+            git reset --hard
+            git pull origin master
+            npm install
+            npm run build
+            pm2 restart all --update-env
+          EOF
