@@ -19,7 +19,7 @@ jobs:
           node-version: '20.x'
 
       - name: Setup SSH
-        uses: webfactory/ssh-agent@v0
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
