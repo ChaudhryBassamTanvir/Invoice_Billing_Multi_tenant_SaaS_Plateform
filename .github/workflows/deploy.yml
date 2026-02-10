@@ -28,7 +28,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
             set -e
             cd ~/nimbus-app
-            git pull origin master
+            git fetch origin
+            git reset --hard origin/master
             npm install
             npm run build
             pm2 restart nimbus-app --update-env
