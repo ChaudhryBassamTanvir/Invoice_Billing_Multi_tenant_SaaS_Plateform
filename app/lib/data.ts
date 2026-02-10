@@ -44,18 +44,6 @@ export async function fetchRevenue(userEmail: string) {
     return [];
   }
 }
-export function generateYAxis(data: { month: string; revenue: number }[]) {
-  if (!data || data.length === 0) return { yAxisLabels: [], topLabel: 0 };
-
-  const revenues = data.map((d) => d.revenue);
-  const maxRevenue = Math.max(...revenues);
-
-  // Round to nearest 10, 50, 100 etc. depending on scale
-  const step = Math.ceil(maxRevenue / 5); // 5 ticks
-  const yAxisLabels = Array.from({ length: 6 }, (_, i) => `$${(step * i).toLocaleString()}`);
-
-  return { yAxisLabels, topLabel: maxRevenue };
-}
 
 
 // export async function fetchRevenue() {
