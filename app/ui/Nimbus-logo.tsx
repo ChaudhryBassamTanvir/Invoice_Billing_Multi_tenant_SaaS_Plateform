@@ -19,7 +19,7 @@ export default function NimbusLogo() {
 
       {/* Text */}
       <p className="text-2xl sm:text-3xl md:text-2xl md:mr-12 font-semibold leading-none">
-        Nimbuss
+        Nimbus
       </p>
     </div>
   );
