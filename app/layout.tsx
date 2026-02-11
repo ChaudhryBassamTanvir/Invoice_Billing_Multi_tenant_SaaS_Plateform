@@ -10,10 +10,10 @@ export const metadata: Metadata = {
     default: 'Nimbus Dashboard',
   },
   metadataBase: new URL('http://51.21.180.128'),
-  description: 'A Dashboard App where users can create an account , create customers and assign invoices to them. Invoices will be shown at the Dashboard page as a summary. This project is based on the Next Learn Course, the official Next.js 14 .',
+  description: 'A Dashboard App where users can create an account , create customers and assign invoices to them. Invoices will be shown at the Dashboard page as a summary. You can also download the invoices',
   openGraph: {
     title: 'Dashboard App,',
-    description: 'A Dashboard App where users can create an account, create customers and assign invoices to them. Invoices will be shown at the Dashboard page as a summary. This project is based on the Next Learn Course, the official Next.js 14 .',
+    description: 'A Dashboard App where users can create an account, create customers and assign invoices to them. Invoices will be shown at the Dashboard page as a summary. You are allowed to download the invoices.',
     siteName: 'Nimbus Dashboard',
     locale: 'en_US'
   }
@@ -27,9 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased ${darkTheme.bg}`}>{children}
-
-
-
             <Toaster richColors position="top-right" />
       </body>
 
