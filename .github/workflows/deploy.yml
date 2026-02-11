@@ -27,12 +27,13 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
-            set -e
-            cd ~/nimbus-app
-            git fetch origin
-            git reset --hard origin/master
-            npm install
-            npm run build
-            pm2 restart nimbus-app --update-env
+          ssh -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
+          set -ex
+          cd ~/nimbus-app
+          git fetch origin
+          git reset --hard origin/master
+          npm install
+          npm run build
+          pm2 restart nimbus-app --update-env
           EOF
+
