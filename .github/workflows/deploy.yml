@@ -1,4 +1,5 @@
 name: Auto Deploy to AWS
+# minor update: workflow maintenance
 
 on:
   push:
@@ -9,6 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DEPLOY_VERSION: "v1.0.1"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -18,14 +22,12 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: CI heartbeat
+        run: echo "CI/CD pipeline active"
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
+          ssh -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") -o StrictHostKeyChecking=no ubuntu@51.21.180.128 << 'EOF'
             set -e
             cd ~/nimbus-app
             git fetch origin
