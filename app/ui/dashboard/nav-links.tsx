@@ -5,12 +5,13 @@ import {
   HomeIcon,
   DocumentDuplicateIcon,
   UserIcon,
-  
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import darkTheme from '@/app/lib/dark-theme';
+
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   {
@@ -19,7 +20,9 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
-  { name: 'My Account', href: '/dashboard/user-profile', icon: UserIcon }
+  { name: 'ChatBot & FAQs', href: '/dashboard/chat-bot', icon: ChatBubbleLeftRightIcon },
+  { name: 'My Account', href: '/dashboard/user-profile', icon: UserIcon },
+
 ];
 
 export default function NavLinks() {

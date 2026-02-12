@@ -37,6 +37,9 @@
   "@faker-js/faker": "^10.2.0",
    
      
+  "@google/generative-ai": "^0.24.1",
+   
+     
   "@heroicons/react": "^2.0.18",
    
      
