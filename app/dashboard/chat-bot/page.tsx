@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import darkTheme from '@/app/lib/dark-theme';
 import { lusitana } from '@/app/ui/fonts';
+import { useState, useEffect } from 'react';
 
 /* ---------------- JSON DATA (SOURCE OF TRUTH) ---------------- */
 
@@ -111,56 +111,64 @@ type Message = {
 
 export default function ChatBotPage() {
     
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      sender: 'bot',
-      text: 'Ask anything related to dashboard, invoices, customers or profile.',
-    },
-  ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+//   const [input, setInput] = useState('');
+//   const [loading, setLoading] = useState(false);
 
   /* ---------------- LOGIC ---------------- */
-const isAllowed = (question: string) => {
-  const q = question.toLowerCase();
-  return chatData.faqs.some(f =>
-    f.keywords.some(k =>
-      k.toLowerCase().split(' ').every(word => q.includes(word))
-    )
-  );
-};
+const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('nimbusChatMessages');
+    if (stored) {
+      setMessages(JSON.parse(stored));
+    } else {
+      // default bot greeting
+      setMessages([
+        {
+          sender: 'bot',
+          text: 'Ask anything related to dashboard, invoices, customers or profile.',
+        },
+      ]);
+    }
+  }, []);
 
-const sendMessage = async () => {
-  if (!input.trim()) return;
+  // Save messages to localStorage whenever they change (keep last 15)
+  useEffect(() => {
+    if (messages.length > 0) {
+      const last15 = messages.slice(-15);
+      localStorage.setItem('nimbusChatMessages', JSON.stringify(last15));
+    }
+  }, [messages]);
 
-  const userText = input;
-  setInput('');
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const userText = input;
+    setInput('');
 
-  setMessages(prev => [...prev, { sender: 'user', text: userText }]);
+    setMessages(prev => [...prev, { sender: 'user', text: userText }]);
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // Find matching FAQ
-    const matched = chatData.faqs.find(f =>
-      f.keywords.some(k =>
-        k.toLowerCase().split(' ').every(word => userText.toLowerCase().includes(word))
-      )
-    );
+    try {
+      const matched = chatData.faqs.find(f =>
+        f.keywords.some(k =>
+          k.toLowerCase().split(' ').every(word => userText.toLowerCase().includes(word))
+        )
+      );
 
-    const reply = matched ? matched.answer : chatData.fallback;
+      const reply = matched ? matched.answer : chatData.fallback;
 
-    setMessages(prev => [...prev, { sender: 'bot', text: reply }]);
-  } catch {
-    setMessages(prev => [
-      ...prev,
-      { sender: 'bot', text: 'Something went wrong.' },
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
+      setMessages(prev => [...prev, { sender: 'bot', text: reply }]);
+    } catch {
+      setMessages(prev => [...prev, { sender: 'bot', text: 'Something went wrong.' }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ---------------- UI ---------------- */
 return (
