@@ -3,9 +3,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { chatData } from "@/app/lib/chat-data";
 
 export async function POST(req: Request) {
+  
   try {
     const { message } = await req.json();
-
+    
+    // myUndefinedFunction(); // This will fail and Sentry will catch it
     if (!message) {
       return NextResponse.json(
         { reply: "No message provided." },
@@ -66,3 +68,7 @@ ${message}
     );
   }
 }
+function myUndefinedFunction() {
+  throw new Error("Function not implemented.");
+}
+

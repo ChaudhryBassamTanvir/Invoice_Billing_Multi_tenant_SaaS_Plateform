@@ -21,6 +21,7 @@ async function getUserName(email: string) {
 
 export default async function Page() {
   
+  // myUndefinedFunction(); // This will fail and Sentry will catch it
 const session = await auth();
 
   if (!session?.user?.email) {
@@ -54,3 +55,7 @@ const session = await auth();
     </main>
   );
 }
+function myUndefinedFunction() {
+  throw new Error('Function not implemented.');
+}
+
